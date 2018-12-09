@@ -1,0 +1,43 @@
+
+
+# Set up a data folder to store files
+data_folder <- "./"
+# Create data folder if necessary
+if(!file.exists("data")) {
+  dir.create("data")
+}
+data_folder <- "./data/"
+
+
+# Set up file download variables
+file.url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+dest.file <- paste0(data_folder,"HAR_Dataset.zip",sep="")
+print(dest.file)
+
+# Set up download methods for different operating systems
+dl.method <- "curl" # sets default for OSX / Linux
+if(substr(Sys.getenv("OS"),1,7) == "Windows") dl.method <- "wininet"
+
+
+# Download the file if it doesn't already exist  
+# It has been verified to work on all major operating systems
+if(!file.exists(dest.file)) {
+  # Download
+	download.file(file.url,
+           		destfile = dest.file,
+           		method = dl.method, # appropriate download method for  OSX / Linux / Windows
+           		mode = "wb") # "wb" means "write binary," and is used for binary files
+
+  # Unzip the file
+	unzip(zipfile = dest.file, exdir = data_folder) # unpack the files into subdirectories 
+}
+
+# Working data folder
+working.folder <- paste0(data_folder, "UCI HAR Dataset/", sep="")
+print(working.folder)
+
+# Load needed libraries
+library(dplyr)
+
+
+
