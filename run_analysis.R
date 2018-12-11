@@ -1,6 +1,10 @@
 
 
 #--- Basic Housekeeping ---#
+
+# Clean the environment variables
+rm(list = ls())
+
 # Set up a data folder to store files
 data_folder <- "./"
 # Create data folder if necessary
@@ -55,7 +59,7 @@ activity.labels.file <- paste0(working.folder, "activity_labels.txt", sep="")
 
 feature_names <- read.table(features.file, header = F)
 activity_labels <- read.table(activity.labels.file, header = F,
-                              col.names = c("Activity_id", "Activity"))
+                              col.names = c("activity_id", "activity"))
 #--- ---#
 
 
@@ -63,16 +67,16 @@ activity_labels <- read.table(activity.labels.file, header = F,
 #--- Load training data ---#
 # File with all 561 variables for training set
 X_train.file <- paste0(working.folder, "train/X_train.txt", sep="")
-# File with 2 variables: activity_id, activity name
+# File with 1 variable: activity_id
 y_train.file <- paste0(working.folder, "train/y_train.txt", sep="")
-# File with 1 variable: subject ID
+# File with 1 variable: subject
 subject_train.file <- paste0(working.folder, "train/subject_train.txt", sep="") 
 
 train_X <- read.table(X_train.file, header = F)
 colnames(train_X) <- feature_names$V2
-train_y <- read.csv(y_train.file, header = F, col.names = c("Activity_id")) %>%
-                left_join(activity_labels, by = "Activity_id")
-train_subject <- read.csv(subject_train.file, header = F, col.names = "Subject")
+train_y <- read.csv(y_train.file, header = F, col.names = c("activity_id")) %>%
+                left_join(activity_labels, by = "activity_id")
+train_subject <- read.csv(subject_train.file, header = F, col.names = "subject")
 #--- ---#
 
 
@@ -81,16 +85,16 @@ train_subject <- read.csv(subject_train.file, header = F, col.names = "Subject")
 #--- Load test data ---#
 # File with all 561 variables for test set
 X_test.file <- paste0(working.folder, "test/X_test.txt", sep="")
-# File with 2 variables: activity_id, activity name
+# File with 1 variable: activity_id
 y_test.file <- paste0(working.folder, "test/y_test.txt", sep="")
-# File with 1 variable: subject ID
+# File with 1 variable: subject
 subject_test.file <- paste0(working.folder, "test/subject_test.txt", sep="")
 
 test_X <- read.table(X_test.file, header = F)
 colnames(test_X) <- feature_names$V2
-test_y <- read.csv(y_test.file, header = F, col.names = c("Activity_id")) %>%
-                left_join(activity_labels, by = "Activity_id")
-test_subject <- read.csv(subject_test.file, header = F, col.names = "Subject")
+test_y <- read.csv(y_test.file, header = F, col.names = c("activity_id")) %>%
+                left_join(activity_labels, by = "activity_id")
+test_subject <- read.csv(subject_test.file, header = F, col.names = "subject")
 #--- ---#
 
 
@@ -102,10 +106,10 @@ test_subject <- read.csv(subject_test.file, header = F, col.names = "Subject")
 train <- cbind(train_X, train_y, train_subject)
 test <- cbind(test_X, test_y, test_subject)
 
-phonedata <- rbind(train, test)
+phone <- rbind(train, test)
 
 # Somehow I get error here, when trying to convert to tibble format
-# phonetbl <- tibble::as_tibble(phonedata)
+# phonetbl <- tibble::as_tibble(phone)
 
 
 ################################################################################################################
@@ -113,17 +117,15 @@ phonedata <- rbind(train, test)
 ################################################################################################################
 
 
-nms <- names(phonedata)
+names(phone)
 
-keepnames <- grepl("mean|std|Subject|Activity", colnames(phonedata)) & !grepl("meanFreq|Activity_id", colnames(phonedata))
+columns_to_keep <- grepl("mean|std|subject|activity_id", colnames(phone)) & !grepl("meanFreq", colnames(phone))
 
-# keepnames <- grepl("-mean|-std|Subject|Activity", colnames(phonedata)) 
 
 # Extract canonical dataframe
-df_canon <- phonedata[, keepnames]
+canonical.phone <- phone[, columns_to_keep]
 
-nms_canon <- names(df_canon)
-print(nms_canon)
+names(canonical.phone)
 
 
 ################################################################################################################
@@ -131,11 +133,43 @@ print(nms_canon)
 ################################################################################################################
 
 
+canonical.phone <- tbl_df(canonical.phone)
+canonical.phone <- inner_join(canonical.phone, activity_labels)
+
+
+
+nms_canon <- names(canonical.phone)
+names(canonical.phone)
+
+canonical.phone <- canonical.phone[,c(67,69,68, 1:66)]
+
+nms_canon <- names(canonical.phone)
+names(canonical.phone)
+
 ################################################################################################################
 # STEP 4. Appropriately labels the data set with descriptive variable names.
 ################################################################################################################
 
 
+#Store the column names in a temporary variable
+temp.colnames <- names(canonical.phone)
+
+#Change the names in the temporary variable
+temp.colnames <- str_replace_all(temp.colnames, "Acc", "-acceleration-")
+temp.colnames <- str_replace_all(temp.colnames, "Gyro", "-gyroscope-")
+temp.colnames <- str_replace_all(temp.colnames, "Mag", "-magnitude")
+temp.colnames <- str_replace_all(temp.colnames, "\\(\\)", "")
+temp.colnames <- str_replace_all(temp.colnames, "^t", "time-")
+temp.colnames <- str_replace_all(temp.colnames, "^f", "frequency-")
+temp.colnames <- str_replace_all(temp.colnames, "tBody", "time-body-")
+temp.colnames <- str_replace_all(temp.colnames, "BodyBody", "body")
+temp.colnames <- str_replace_all(temp.colnames, "--", "-")
+#Set the names to lower case
+temp.colnames <- tolower(temp.colnames)
+
+#Replace the names in canonical.phone with the ones in the temporary variable.
+names(canonical.phone) <- temp.colnames
+names(canonical.phone)
 
 
 
@@ -145,6 +179,26 @@ print(nms_canon)
 ################################################################################################################
 
 
+
+# Take the canonical.phone table and collapse columns into key-value pairs.
+tidy.phone <- canonical.phone %>% gather(sensor, value, 4:69)
+
+# Aggregate the data, order the columns and order the rows.
+tidy.phone <- aggregate(value ~ sensor + activity + subject, data=tidy.phone,
+                   mean, na.rm=TRUE) %>%
+  select(activity, subject, sensor, value) %>%
+  group_by(subject, activity, sensor)
+
+# Make all the column names in lowercase
+# In our case, as they are already in lower case, this will have no effect
+names(tidy.phone) <- tolower(names(tidy.phone))
+
+
+names(tidy.phone)
+head(tidy.phone,3)
+
+# Write out tidy data set to a .txt file.
+write.table(tidy.phone, "tidy_phone_data.txt", row.name = FALSE)
 
 
 
