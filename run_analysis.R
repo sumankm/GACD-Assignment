@@ -116,15 +116,17 @@ phone <- rbind(train, test)
 # STEP 2. Extracts only the measurements on the mean and standard deviation for each measurement.
 ################################################################################################################
 
-
+# Print the column names
 names(phone)
 
+# Make a boolean vector of columns we want to keep
 columns_to_keep <- grepl("mean|std|subject|activity_id", colnames(phone)) & !grepl("meanFreq", colnames(phone))
 
 
-# Extract canonical dataframe
+# Extract canonical dataframe with only the columns we are interested in
 canonical.phone <- phone[, columns_to_keep]
 
+# Print the column names
 names(canonical.phone)
 
 
@@ -132,18 +134,17 @@ names(canonical.phone)
 # STEP 3. Uses descriptive activity names to name the activities in the data set
 ################################################################################################################
 
-
+# Convert data frame to tibble format and join with activity_labels
 canonical.phone <- tbl_df(canonical.phone)
 canonical.phone <- inner_join(canonical.phone, activity_labels)
 
-
-
-nms_canon <- names(canonical.phone)
+# Print the column names
 names(canonical.phone)
 
+# Re-arrange the columns
 canonical.phone <- canonical.phone[,c(67,69,68, 1:66)]
 
-nms_canon <- names(canonical.phone)
+# Print the column names
 names(canonical.phone)
 
 ################################################################################################################
@@ -169,6 +170,8 @@ temp.colnames <- tolower(temp.colnames)
 
 #Replace the names in canonical.phone with the ones in the temporary variable.
 names(canonical.phone) <- temp.colnames
+
+# Print the column names
 names(canonical.phone)
 
 
@@ -193,8 +196,10 @@ tidy.phone <- aggregate(value ~ sensor + activity + subject, data=tidy.phone,
 # In our case, as they are already in lower case, this will have no effect
 names(tidy.phone) <- tolower(names(tidy.phone))
 
-
+# Print the column names
 names(tidy.phone)
+
+# Print first 3 lines of data
 head(tidy.phone,3)
 
 # Write out tidy data set to a .txt file.
