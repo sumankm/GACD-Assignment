@@ -111,6 +111,10 @@ phone <- rbind(train, test)
 # Somehow I get error here, when trying to convert to tibble format
 # phonetbl <- tibble::as_tibble(phone)
 
+# Sanity check for NAs
+any(is.na(phone))
+
+
 
 ################################################################################################################
 # STEP 2. Extracts only the measurements on the mean and standard deviation for each measurement.

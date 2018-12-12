@@ -116,4 +116,28 @@ tidy.phone <- aggregate(value ~ sensor + activity + subject, data=tidy.phone,
   group_by(subject, activity, sensor)
 ```
 
+The final output is the tidy.phone table
+
+The first three entries of the table is shown below to giove the reader a feel for what it looks like.
+
+```
+> head(tidy.phone,3)
+# A tibble: 3 x 4
+# Groups:   subject, activity, sensor [3]
+  activity subject sensor                                           value
+  <fct>      <int> <chr>                                            <dbl>
+1 LAYING         1 frequency-body-acceleration-jerk-magnitude-mean -0.933
+2 LAYING         1 frequency-body-acceleration-jerk-magnitude-std  -0.922
+3 LAYING         1 frequency-body-acceleration-jerk-mean-x         -0.957
+```
+
+As we can see, all features and measurements have been now gathered into columns such that each row is a distinct observation, amnd the table now fulfills all requiremenst of the tidy data principles.
+
+## Final Notes
+Also, some basic sanity checks have been performed to check if NA entries are present.
+
+ 
+
+
+
 
