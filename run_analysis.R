@@ -131,7 +131,7 @@ names(canonical.phone)
 
 
 ################################################################################################################
-# STEP 3. Uses descriptive activity names to name the activities in the data set
+# STEP 3. Uses descriptive activity names to name the activities in the data set.
 ################################################################################################################
 
 # Convert data frame to tibble format and join with activity_labels
