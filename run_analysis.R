@@ -110,10 +110,18 @@ phone <- rbind(train, test)
 
 # Somehow I get error here, when trying to convert to tibble format
 # phonetbl <- tibble::as_tibble(phone)
+# phonetbl <- tbl_df(phone)
 
 # Sanity check for NAs
+any(is.na(feature_names))
+any(is.na(activity_labels))
+any(is.na(train_X))
+any(is.na(train_y))
+any(is.na(train_subject))
+any(is.na(test_X))
+any(is.na(test_y))
+any(is.na(test_subject))
 any(is.na(phone))
-
 
 
 ################################################################################################################

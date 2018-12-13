@@ -21,9 +21,11 @@ So the main objective of this exercise is to convert the given messy data into t
 ## Libraries Needed
 Only the dplyr package is needed for this script.
 
+## Source of Dataset
+The raw source material used was obtained from the following URL:
+https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+
 ## How the Script Ingests Source Files and Conevrts Data into Tidy Format
-
-
 Basic description of the data files is given below.  The CodeBook.md file gives much more details about the data and transformations.
 
 - README.txt: Introdoction of the Human Activity Recognition Using Smartphones Dataset.
@@ -137,7 +139,7 @@ The first three entries of the table is shown below to giove the reader a feel f
 As we can see, all features and measurements have been now gathered into columns such that each row is a distinct observation, amnd the table now fulfills all requiremenst of the tidy data principles.
 
 ## Final Notes
-Also, some basic sanity checks have been performed to check if NA entries are present.
+Also, some basic sanity checks has been performed to check if NA entries are present in original data. As the check is done at the beginning, it is not necesary to repeat the check for tables created later.
 
  
 
