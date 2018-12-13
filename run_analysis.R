@@ -43,7 +43,7 @@ working.folder <- paste0(data_folder, "UCI HAR Dataset/", sep="")
 
 # Load needed libraries
 # Loading using lapply is helpful when multiple libraries need to be loaded
-libraries <- c("dplyr", "tidyverse")
+libraries <- c("dplyr")
 lapply(libraries, require, character.only = TRUE)
 #--- End of Basic Housekeeping ---#
 

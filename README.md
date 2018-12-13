@@ -1,6 +1,6 @@
 
 # README file for Getting and Cleaning Data Course Project
-S. Manandhar
+Suman Mann
 December 12, 2018
 
 # Introduction
@@ -18,10 +18,13 @@ According to *The Elements of Data Analytic Style: A guide for people who want t
 
 So the main objective of this exercise is to convert the given messy data into tidy data. 
 
+## Libraries Needed
+Only the dplyr package is needed for this script.
+
 ## How the Script Ingests Source Files and Conevrts Data into Tidy Format
 
 
-Basic description of the data files is given below.
+Basic description of the data files is given below.  The CodeBook.md file gives much more details about the data and transformations.
 
 - README.txt: Introdoction of the Human Activity Recognition Using Smartphones Dataset.
 
