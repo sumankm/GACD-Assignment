@@ -43,7 +43,7 @@ working.folder <- paste0(data_folder, "UCI HAR Dataset/", sep="")
 
 # Load needed libraries
 # Loading using lapply is helpful when multiple libraries need to be loaded
-libraries <- c("dplyr")
+libraries <- c("tidyverse")
 lapply(libraries, require, character.only = TRUE)
 #--- End of Basic Housekeeping ---#
 
@@ -57,9 +57,31 @@ features.file <- paste0(working.folder, "features.txt", sep="")
 activity.labels.file <- paste0(working.folder, "activity_labels.txt", sep="")
 
 
-feature_names <- read.table(features.file, header = F)
+feature_names <- read.table(features.file, header = F, col.names = c("feature_id", "feature"), 
+                            colClasses = c("integer", "factor"), sep=" " )
 activity_labels <- read.table(activity.labels.file, header = F,
-                              col.names = c("activity_id", "activity"))
+                              col.names = c("activity_id", "activity"), 
+                              colClasses = c("integer", "factor"), sep =" " )
+
+
+# Assertions
+if all(is.integer(feature_names$feature_id)) {
+  stop("feature_id is not integer.")
+}
+
+if !all(is.factor(feature_names$feature)) {
+  stop("feature is not factor.")
+}
+
+if !all(is.integer(activity_labels$activity_id)) {
+  stop("activity_id is not integer.")
+}
+
+
+if !all(is.factor(feature_names$activity)) {
+  stop("activity is not factor.")
+}
+
 #--- ---#
 
 
@@ -73,10 +95,11 @@ y_train.file <- paste0(working.folder, "train/y_train.txt", sep="")
 subject_train.file <- paste0(working.folder, "train/subject_train.txt", sep="") 
 
 train_X <- read.table(X_train.file, header = F)
-colnames(train_X) <- feature_names$V2
+colnames(train_X) <- feature_names$feature
 train_y <- read.csv(y_train.file, header = F, col.names = c("activity_id")) %>%
                 left_join(activity_labels, by = "activity_id")
 train_subject <- read.csv(subject_train.file, header = F, col.names = "subject")
+
 #--- ---#
 
 
@@ -91,7 +114,7 @@ y_test.file <- paste0(working.folder, "test/y_test.txt", sep="")
 subject_test.file <- paste0(working.folder, "test/subject_test.txt", sep="")
 
 test_X <- read.table(X_test.file, header = F)
-colnames(test_X) <- feature_names$V2
+colnames(test_X) <- feature_names$feature
 test_y <- read.csv(y_test.file, header = F, col.names = c("activity_id")) %>%
                 left_join(activity_labels, by = "activity_id")
 test_subject <- read.csv(subject_test.file, header = F, col.names = "subject")
@@ -108,9 +131,7 @@ test <- cbind(test_X, test_y, test_subject)
 
 phone <- rbind(train, test)
 
-# Somehow I get error here, when trying to convert to tibble format
-# phonetbl <- tibble::as_tibble(phone)
-# phonetbl <- tbl_df(phone)
+
 
 # Sanity check for NAs
 any(is.na(feature_names))
@@ -122,6 +143,8 @@ any(is.na(test_X))
 any(is.na(test_y))
 any(is.na(test_subject))
 any(is.na(phone))
+
+
 
 
 ################################################################################################################
@@ -158,6 +181,7 @@ canonical.phone <- canonical.phone[,c(67,69,68, 1:66)]
 
 # Print the column names
 names(canonical.phone)
+
 
 ################################################################################################################
 # STEP 4. Appropriately labels the data set with descriptive variable names.
@@ -200,7 +224,7 @@ tidy.phone <- canonical.phone %>% gather(sensor, value, 4:69)
 
 # Aggregate the data, order the columns and order the rows.
 tidy.phone <- aggregate(value ~ sensor + activity + subject, data=tidy.phone,
-                   mean, na.rm=TRUE) %>%
+                        mean, na.rm=TRUE) %>%
   select(activity, subject, sensor, value) %>%
   group_by(subject, activity, sensor)
 

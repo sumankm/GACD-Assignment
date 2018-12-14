@@ -1,11 +1,14 @@
 
 
 # Code Book for Getting and Cleaning Data Course Project
-Suman Mann
+Su Mann
 December 2018
 
 ## Aims of the Code Book
 This code book describes the variables, the data, and any transformations or work that was performed to clean up the data.
+
+## Brief Summary of Data Transformations
+After finding a canonical version of the phone data, gather and aggregate functions from the tidyverse dplyr package are used to convert the tables into tidy data.
 
 ## Source of Dataset
 The raw source material used was obtained from the following URL:
@@ -50,7 +53,7 @@ sma(): Signal magnitude area
 energy(): Energy measure. Sum of the squares divided by the number of values. 
 iqr(): Interquartile range 
 entropy(): Signal entropy
-arCoeff(): Autorregresion coefficients with Burg order equal to 4
+arCoeff(): Autoregression coefficients with Burg order equal to 4
 correlation(): correlation coefficient between two signals
 maxInds(): index of the frequency component with largest magnitude
 meanFreq(): Weighted average of the frequency components to obtain a mean frequency
@@ -87,13 +90,13 @@ The following data files are loaded into tables.
 
 - test/y_test.txt: Test labels for 2947 observations.
 
-Each of these files when converted into dataframes is descried next.
+Each of these files when converted into dataframes is described next.
 
 
 - activity_labels.txt: Links the class labels with their activity name.
 activity_labels <- activity_labels.txt  
-activity_id : Numeric
-activity : Character
+activity_id : Integer
+activity : Factor
 
 ```
 > head(activity_labels)
@@ -110,8 +113,8 @@ activity : Character
 
 - features.txt: List of all features. List of 561 different features.
 feature_names <- features.txt
-V1 : Numeric
-V2 : Character
+V1 : Integer
+V2 : Factor
 
 ```
 > head(feature_names)
@@ -228,7 +231,7 @@ The phone dataframe has 10299 observations of 564 variables.
 ### Step 2
 Step 2 extracts only the measurements on the mean and standard deviation for each measurement.
 
-A boolean vector called columns_to_keep is consructed to keep only the fields that match mean|std|subject|activity_id.
+A boolean vector called columns_to_keep is constructed to keep only the fields that match mean|std|subject|activity_id.
 Then a new table called canonical.phone is extracted out of it.
 
 ```
@@ -290,7 +293,7 @@ tidy.phone <- aggregate(value ~ sensor + activity + subject, data=tidy.phone,
 
 The final output is the tidy.phone table
 
-The first three entries of the table is shown below to giove the reader a feel for what it looks like.
+The first three entries of the table is shown below to give the reader a feel for what it looks like.
 
 ```
 > head(tidy.phone,3)
@@ -303,8 +306,8 @@ The first three entries of the table is shown below to giove the reader a feel f
 3 LAYING         1 frequency-body-acceleration-jerk-mean-x         -0.957
 ```
 
-As we can see, all features and measurements have been now gathered into columns such that each row is a distinct observation, amnd the table now fulfills all requiremenst of the tidy data principles.
+As we can see, all features and measurements have been now gathered into columns such that each row is a distinct observation, and the table now fulfills all requirements of the tidy data principles.
 
 ## Final Notes
-Also, some basic sanity checks have been performed to check if NA entries are present.
+Also, some basic sanity checks have been performed to check if NA entries are present, if data types are correct, etc.
 

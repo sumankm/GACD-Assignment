@@ -1,10 +1,12 @@
 
 # README file for Getting and Cleaning Data Course Project
-Suman Mann
+Su Mann
 December 12, 2018
 
 # Introduction
-This README file explains how the script run_nalysis.R works.  The aim here is to document the crucial parts of the script, not to detail every aspect of it.
+This README file explains how the script run_analysis.R works.  The aim here is to document the crucial parts of the script, not to detail every aspect of it.
+
+It is better to run this script in steps so that structures of the data generated can be seen to get a feel for it.  Later, these codes for checking structures of the data can be commented out.
 
 
 ## What the Script Aims to Do
@@ -19,16 +21,29 @@ According to *The Elements of Data Analytic Style: A guide for people who want t
 So the main objective of this exercise is to convert the given messy data into tidy data. 
 
 ## Libraries Needed
-Only the dplyr package is needed for this script.
+Only the tidyverse package is needed for this script.  The dplyr and stringr packages are included in tidyverse. 
 
 ## Source of Dataset
 The raw source material used was obtained from the following URL:
 https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
 
-## How the Script Ingests Source Files and Conevrts Data into Tidy Format
+## Quality Control
+By carefully constructing the read.csv with colClasses and column names and checking for assertions with proper data types, we can control quality of data.
+
+An example is the following lines of code.  It will stop execution is condition is not met.
+```
+# Assertions
+if all(is.integer(feature_names$feature_id)) {
+  stop("feature_id is not integer.")
+}
+```
+
+
+
+## How the Script Ingests Source Files and Converts Data into Tidy Format
 Basic description of the data files is given below.  The CodeBook.md file gives much more details about the data and transformations.
 
-- README.txt: Introdoction of the Human Activity Recognition Using Smartphones Dataset.
+- README.txt: Introduction of the Human Activity Recognition Using Smartphones Dataset.
 
 - features_info.txt: Shows information about (or, meaning of) the variables used on the feature vector in features.txt.
 
@@ -61,7 +76,7 @@ The phone dataframe has 10299 observations of 564 variables.
 ### Step 2
 Step 2 extracts only the measurements on the mean and standard deviation for each measurement.
 
-A boolean vector called columns_to_keep is consructed to keep only the fields that match mean|std|subject|activity_id.
+A boolean vector called columns_to_keep is constructed to keep only the fields that match mean|std|subject|activity_id.
 Then a new table called canonical.phone is extracted out of it.
 
 ```
@@ -123,7 +138,7 @@ tidy.phone <- aggregate(value ~ sensor + activity + subject, data=tidy.phone,
 
 The final output is the tidy.phone table
 
-The first three entries of the table is shown below to giove the reader a feel for what it looks like.
+The first three entries of the table is shown below to give the reader a feel for what it looks like.
 
 ```
 > head(tidy.phone,3)
@@ -136,12 +151,33 @@ The first three entries of the table is shown below to giove the reader a feel f
 3 LAYING         1 frequency-body-acceleration-jerk-mean-x         -0.957
 ```
 
-As we can see, all features and measurements have been now gathered into columns such that each row is a distinct observation, amnd the table now fulfills all requiremenst of the tidy data principles.
+As we can see, all features and measurements have been now gathered into columns such that each row is a distinct observation, and the table now fulfills all requirements of the tidy data principles.
 
 ## Final Notes
-Also, some basic sanity checks has been performed to check if NA entries are present in original data. As the check is done at the beginning, it is not necesary to repeat the check for tables created later.
+Also, some basic sanity checks has been performed to check if NA entries are present in original data. As the check is done at the beginning, it is not necessary to repeat the check for tables created later.
 
+To improve efficiency, libraries like microbenchmark could be used in the future to test and improve some subroutines.
  
+```
+## Microbenchmark of some main routines.
+## This should be commented out when running the script in production.
+## It is here just to give us an idea of how long it takes to execute these routines.
+
+library(microbenchmark)
+mbm = microbenchmark(
+  gather = tidy.phone <- canonical.phone %>% gather(sensor, value, 4:69),
+  aggregate = tidy.phone <- aggregate(value ~ sensor + activity + subject, data=tidy.phone,
+                        mean, na.rm=TRUE) %>%
+  select(activity, subject, sensor, value) %>%
+  group_by(subject, activity, sensor),
+  times=100
+)
+mbm
+
+```
+
+
+
 
 
 
