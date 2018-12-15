@@ -1,5 +1,13 @@
 
 
+# NOTE: 
+# Some commands to see the structure of tables, checks for NAs and displaying header rows 
+# have been left uncommented.
+# When the program is run in block by block fashion, this helps us 
+# see what is going on and what transformations have been made.
+# In production systems, these helper codes can be commented out,
+# or removed.
+
 #--- Basic Housekeeping ---#
 
 # Clean the environment variables
@@ -64,23 +72,6 @@ activity_labels <- read.table(activity.labels.file, header = F,
                               colClasses = c("integer", "factor"), sep =" " )
 
 
-# Assertions
-if all(is.integer(feature_names$feature_id)) {
-  stop("feature_id is not integer.")
-}
-
-if !all(is.factor(feature_names$feature)) {
-  stop("feature is not factor.")
-}
-
-if !all(is.integer(activity_labels$activity_id)) {
-  stop("activity_id is not integer.")
-}
-
-
-if !all(is.factor(feature_names$activity)) {
-  stop("activity is not factor.")
-}
 
 #--- ---#
 
@@ -94,11 +85,11 @@ y_train.file <- paste0(working.folder, "train/y_train.txt", sep="")
 # File with 1 variable: subject
 subject_train.file <- paste0(working.folder, "train/subject_train.txt", sep="") 
 
-train_X <- read.table(X_train.file, header = F)
+train_X <- read.table(X_train.file, header = F, colClasses=c(rep('numeric', 561)))
 colnames(train_X) <- feature_names$feature
-train_y <- read.csv(y_train.file, header = F, col.names = c("activity_id")) %>%
+train_y <- read.csv(y_train.file, header = F, col.names = c("activity_id"), colClasses = c("integer"), sep =" " ) %>%
                 left_join(activity_labels, by = "activity_id")
-train_subject <- read.csv(subject_train.file, header = F, col.names = "subject")
+train_subject <- read.csv(subject_train.file, header = F, col.names = "subject", colClasses = c("integer"))
 
 #--- ---#
 
@@ -113,11 +104,11 @@ y_test.file <- paste0(working.folder, "test/y_test.txt", sep="")
 # File with 1 variable: subject
 subject_test.file <- paste0(working.folder, "test/subject_test.txt", sep="")
 
-test_X <- read.table(X_test.file, header = F)
+test_X <- read.table(X_test.file, header = F, colClasses=c(rep('numeric', 561)))
 colnames(test_X) <- feature_names$feature
-test_y <- read.csv(y_test.file, header = F, col.names = c("activity_id")) %>%
+test_y <- read.csv(y_test.file, header = F, col.names = c("activity_id"), colClasses = c("integer")) %>%
                 left_join(activity_labels, by = "activity_id")
-test_subject <- read.csv(subject_test.file, header = F, col.names = "subject")
+test_subject <- read.csv(subject_test.file, header = F, col.names = "subject", colClasses = c("integer"))
 #--- ---#
 
 
@@ -179,6 +170,8 @@ names(canonical.phone)
 # Re-arrange the columns
 canonical.phone <- canonical.phone[,c(67,69,68, 1:66)]
 
+
+     
 # Print the column names
 names(canonical.phone)
 
@@ -227,6 +220,7 @@ tidy.phone <- aggregate(value ~ sensor + activity + subject, data=tidy.phone,
                         mean, na.rm=TRUE) %>%
   select(activity, subject, sensor, value) %>%
   group_by(subject, activity, sensor)
+
 
 # Make all the column names in lowercase
 # In our case, as they are already in lower case, this will have no effect

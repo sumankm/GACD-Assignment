@@ -6,7 +6,9 @@ December 12, 2018
 # Introduction
 This README file explains how the script run_analysis.R works.  The aim here is to document the crucial parts of the script, not to detail every aspect of it.
 
-It is better to run this script in steps so that structures of the data generated can be seen to get a feel for it.  Later, these codes for checking structures of the data can be commented out.
+It is better to run this script in steps so that structures of the data generated can be seen to get a feel for it (commands to see the structure of tables, checks for NAs and displaying header rows, etc).  Later, these codes for checking structures of the data can be commented out.
+
+
 
 
 ## What the Script Aims to Do
@@ -26,19 +28,6 @@ Only the tidyverse package is needed for this script.  The dplyr and stringr pac
 ## Source of Dataset
 The raw source material used was obtained from the following URL:
 https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
-
-## Quality Control
-By carefully constructing the read.csv with colClasses and column names and checking for assertions with proper data types, we can control quality of data.
-
-An example is the following lines of code.  It will stop execution is condition is not met.
-```
-# Assertions
-if all(is.integer(feature_names$feature_id)) {
-  stop("feature_id is not integer.")
-}
-```
-
-
 
 ## How the Script Ingests Source Files and Converts Data into Tidy Format
 Basic description of the data files is given below.  The CodeBook.md file gives much more details about the data and transformations.
@@ -61,6 +50,13 @@ Basic description of the data files is given below.  The CodeBook.md file gives 
 
 
 Please kindly note that in showing the steps below only the important parts of the codes are shown.  For details, please refer directly to run_analysis.R.
+
+### Quality Control
+Basic quality control of dataset can be done by carefully setting datatypes at the outset, i.e., when reading the CSV files. An example is shown below to ensure that all data in this table should be read as numeric; otherwise they will be converted to NA.
+
+```
+train_X <- read.table(X_train.file, header = F, colClasses=c(rep('numeric', 561)))
+```
 
 ### Step 1
 Step 1 merges the training and the test sets to create one data set.  Training data and test data are first go through column binding and then the resulting tables are combined to produce a new table called phone.

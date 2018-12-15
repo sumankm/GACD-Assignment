@@ -1,24 +1,2 @@
 
 
-
-
-# Somehow I get error here, when trying to convert to tibble format
-# just aftre the line
-# phone <- rbind(train, test)
-phonetbl1 <- tibble::as_tibble("phone")
-phonetbl2 <- tbl_df("phone")
-
-
-Why is as.numeric(levels(f))[f] more efficent than as.numeric(as.character(f))?
-
-as.numeric(as.character(f)) is effectively as.numeric(levels(f)[f]), so you are performing the conversion to numeric on length(x) values, rather than on nlevels(x) values. The speed difference will be most apparent for long vectors with few levels. If the values are mostly unique, there won't be much difference in speed. However you do the conversion, this operation is unlikely to be the bottleneck in your code, so don't worry too much about it.
-
-
-
-Test for all  members of a column
-all( is.numeric(canonical.phone[4]))
-
-lapply(phone, function(x) all( is.numeric(canonical.phone[4:69]) ))
-
-
-
