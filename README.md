@@ -37,16 +37,15 @@ Basic description of the data files is given below.  The CodeBook.md file gives 
 - features_info.txt: Shows information about (or, meaning of) the variables used on the feature vector in features.txt.
 
 - features.txt: List of all features. List of 561 different features.
-
 - activity_labels.txt: Links the class labels with their activity name.
 
 - train/X_train.txt: Training set. 7352 observations of 561 variables.
-
-- train/y_train.txt: Training labels for 7352 observations.
+- train/y_train.txt: Training labels or activity_ids for 7352 observations.
+- train/subject_train.txt: subject_ids for training, 7352 observations..
 
 - test/X_test.txt: Test set.  2947 observations of 561 variables.
-
-- test/y_test.txt: Test labels for 2947 observations.
+- test/y_test.txt: Test labels or activity_ids for 2947 observations.
+- test/subject_test.txt: subject_ids for test, 2947 observations.
 
 
 Please kindly note that in showing the steps below only the important parts of the codes are shown.  For details, please refer directly to run_analysis.R.

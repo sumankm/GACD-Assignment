@@ -15,11 +15,13 @@ rm(list = ls())
 
 # Set up a data folder to store files
 data_folder <- "./"
+
+# If a separate data folder is desired, the following code can be commented out.
 # Create data folder if necessary
-if(!file.exists("data")) {
-  dir.create("data")
-}
-data_folder <- "./data/"
+# if(!file.exists("data")) {
+#   dir.create("data")
+# }
+# data_folder <- "./data/"
 
 
 # Set up file download variables

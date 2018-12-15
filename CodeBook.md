@@ -79,16 +79,15 @@ The features_info.txt file is used for reference but not to load into data frame
 The following data files are loaded into tables.
 
 - features.txt: List of all features. List of 561 different features.
-
 - activity_labels.txt: Links the class labels with their activity name.
 
 - train/X_train.txt: Training set. 7352 observations of 561 variables.
-
-- train/y_train.txt: Training labels for 7352 observations.
+- train/y_train.txt: Training labels or activity_ids for 7352 observations.
+- train/subject_train.txt: subject_ids for training, 7352 observations..
 
 - test/X_test.txt: Test set.  2947 observations of 561 variables.
-
-- test/y_test.txt: Test labels for 2947 observations.
+- test/y_test.txt: Test labels or activity_ids for 2947 observations.
+- test/subject_test.txt: subject_ids for test, 2947 observations.
 
 Each of these files when converted into dataframes is described next.
 
